@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>EC2 Manager - Lab 2.3</title>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Panel Zarządzania EC2 <small>Lab 2.3</small></h1>
+    </div>
+
+    <section class="panel panel-info">
+        <div class="panel-heading">Uruchamianie nowej instancji</div>
+        <div class="panel-body text-center">
+            <button id="btnLaunch" class="btn btn-lg btn-success">Uruchom EC2</button>
+            <hr>
+            <div id="loader" style="display:none;" class="alert alert-warning">Czekam na IP...</div>
+            <div id="result" style="display:none;" class="alert alert-success">
+                <p><b>ID:</b> <span id="res-id"></span></p>
+                <p><b>IP:</b> <span id="res-ip"></span></p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.getElementById('btnLaunch').addEventListener('click', function() {
+        const loader = document.getElementById('loader');
+        const result = document.getElementById('result');
+        const resId = document.getElementById('res-id');
+        const resIp = document.getElementById('res-ip');
+
+        loader.style.display = 'block';
+        result.style.display = 'none';
+
+        console.log("Wysyłam żądanie do /lab2_3_launch...");
+
+        fetch('/lab2_3_launch')
+            .then(r => {
+                console.log("Otrzymano odpowiedź od serwera. Status:", r.status);
+                return r.json();
+            })
+            .then(data => {
+                console.log("Dane odebrane z backendu:", data);
+
+                if(data.success) {
+                    resId.innerText = data.instanceId;
+                    resIp.innerText = data.publicIp;
+                    result.style.display = 'block';
+                    console.log("Dane wstawione do HTML");
+                } else {
+                    alert("Serwer zwrócił błąd: " + data.error);
+                }
+            })
+            .catch(err => {
+                console.error("Błąd po stronie przeglądarki:", err);
+                alert("Wystąpił błąd podczas odbierania danych. Sprawdź konsolę (F12).");
+            })
+            .finally(() => {
+                loader.style.display = 'none';
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,18 +1,20 @@
-var lab1_1 = require("./lab/lab1_1").lab
-var example_1 = require("./example_1").lab;
+const lab1_1 = require("./lab/lab1_1").lab
+const example_1 = require("./example_1").lab;
 const lab2_2 = require("./lab/lab2_2").lab;
+const lab2_3 = require("./lab/lab2_3").lab;
 
-var PORT = 8080;
+const PORT = 8080;
 
-
-var urlMap = [
+const urlMap = [
 	{path: "/", action:__dirname + "/static/index.html"},	 
 	{path: "/digest", action: lab1_1},	
 	{path: "/example_1", action: example_1},
 	{path: "/lab2_2", action: lab2_2},
+	{path: "/lab2_3", action: __dirname + "/static/lab2_3.html"},
+	{path: "/lab2_3_launch", action: lab2_3},
 	];
 
-var service = require("./lib/service").http(urlMap);
+const service = require("./lib/service").http(urlMap);
 
 service(PORT);
 

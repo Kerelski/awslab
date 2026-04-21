@@ -5,6 +5,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "@aws-sdk/client-ec2": "^3.1033.0",
     "async": "^0.2.10",
     "aws-sdk": "~2.0.0-rc9",
     "express": ">=3.11.0"
