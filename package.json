@@ -5,6 +5,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "@aws-sdk/client-auto-scaling": "^3.1037.0",
     "@aws-sdk/client-ec2": "^3.1033.0",
     "async": "^0.2.10",
     "aws-sdk": "~2.0.0-rc9",
