@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>ASG Manager - Laboratorium 3</title>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Zarządzanie Auto Scaling Group <small>Laboratorium 3</small></h1>
+    </div>
+
+    <section class="panel panel-primary">
+        <div class="panel-heading">Zmiana liczby instancji (Desired Capacity)</div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Nazwa ASG:</label>
+                    <div class="col-sm-8">
+                        <input type="text" id="asgName" class="form-control" placeholder="np. AdamskiASG" value="AdamskiASG">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Liczba instancji:</label>
+                    <div class="col-sm-8">
+                        <input type="number" id="desiredCount" class="form-control" value="1" min="0" max="2">
+                        <span class="help-block">Zgodnie z labem: min 1, max 2.</span>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button id="btnUpdate" class="btn btn-lg btn-primary">Aktualizuj ASG</button>
+                </div>
+            </div>
+
+            <hr>
+            <div id="loader" style="display:none;" class="alert alert-warning">Komunikacja z AWS API...</div>
+            <div id="result" style="display:none;" class="alert alert-success">
+                <p><b>Status:</b> <span id="res-msg"></span></p>
+                <p><b>Czas:</b> <span id="res-time"></span></p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.getElementById('btnUpdate').addEventListener('click', function() {
+        const loader = document.getElementById('loader');
+        const result = document.getElementById('result');
+        const resMsg = document.getElementById('res-msg');
+        const resTime = document.getElementById('res-time');
+
+        const asgName = document.getElementById('asgName').value;
+        const desired = document.getElementById('desiredCount').value;
+
+        loader.style.display = 'block';
+        result.style.display = 'none';
+
+        console.log(`Wysyłam żądanie zmiany pojemności dla ${asgName} na ${desired}...`);
+
+        const url = `/lab3_asg_update?asgName=${asgName}&desired=${desired}`;
+
+        fetch(url)
+            .then(r => {
+                if (!r.ok) throw new Error('Błąd połączenia z serwerem');
+                return r.json();
+            })
+            .then(data => {
+                console.log("Odpowiedź z backendu:", data);
+
+                if(data.success) {
+                    resMsg.innerText = data.message;
+                    resTime.innerText = data.timestamp;
+                    result.style.display = 'block';
+                } else {
+                    alert("Błąd: " + (data.error || "Nieznany błąd"));
+                }
+            })
+            .catch(err => {
+                console.error("Błąd fetch:", err);
+                alert("Wystąpił błąd: " + err.message);
+            })
+            .finally(() => {
+                loader.style.display = 'none';
+            });
+    });
+</script>
+</body>
+</html>
